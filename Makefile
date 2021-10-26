@@ -10,6 +10,9 @@ package-install: build
 lint:
 	poetry run flake8 gendiff
 
+test:
+	poetry run pytest
+
 gendiff:
 	poetry run gendiff
 
