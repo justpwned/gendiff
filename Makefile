@@ -7,6 +7,9 @@ build:
 package-install: build
 	python3 -m pip install --user dist/*.whl --force-reinstall
 
+lint:
+	poetry run flake8 gendiff
+
 gendiff:
 	poetry run gendiff
 
