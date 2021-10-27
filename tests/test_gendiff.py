@@ -1,7 +1,13 @@
 from gendiff import generate_diff
-import json
+import os
 
 
 def test_diff():
-    file1 = json.load(open('tests/fixtures/file1.json'))
-    file2 = json.load(open('tests/fixtures/file2.json'))
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath1 = os.path.join(base_dir, 'fixtures/file1.json')
+    filepath2 = os.path.join(base_dir, 'fixtures/file2.json')
+
+    with open('tests/fixtures/diff_file1_file2', 'r') as df:
+        diff = df.read()
+
+    assert generate_diff(filepath1, filepath2) == diff
