@@ -1,11 +1,4 @@
 import json
-import copy
-
-
-# def diff_stringify(diff):
-#     sorted_keys = sorted(diff.keys())
-#     for k, v in sorted(diff.items()):
-#         if v['state']
 
 
 def stringify(value, replacer=' ', space_count=1):
@@ -29,10 +22,22 @@ def stringify(value, replacer=' ', space_count=1):
 
 def get_value_type(value):
     if isinstance(value, dict):
-        return 'object'
+        return 'dict'
     elif isinstance(value, list):
-        return 'array'
+        return 'list'
     return 'primitive'
+
+
+# A bit hacky solution, couldn't find a way to make it more elegant without OOP
+def get_value_for_type(type):
+    return globals()['generate_diff_' + type]
+
+
+def generate_diff_primitive(prim1, prim2):
+    return {
+        'old': prim1,
+        'new': prim2
+    }
 
 
 def generate_diff_list(list1, list2):
@@ -41,16 +46,18 @@ def generate_diff_list(list1, list2):
 
 def generate_diff_dict(old_dict, new_dict):
     """
-    Diff dict structure
+    Diff dict semantics:
+
+    <TYPE> := 'dict' | 'list' | 'primitive'
+    <VALUE> := <DICT> | <LIST> | <PRIMITIVE>
+
     {
         field: {
             'state': 'added' | 'removed' | 'unchanged' | 'changed' ,
-            'type': 'object' | 'array' | 'primitive'
-            'value': value | { 'old': old_value, 'new': new_value }
-            'children': [...] | {...} | None
+            'type': <TYPE> | { 'old': <TYPE>, 'new': <TYPE>}
+            'value': <VALUE> | { 'old': <VALUE>, 'new': <VALUE> }
         }
     }
-    First implement only dict support!
     """
 
     old_dict_keys = old_dict.keys()
@@ -83,47 +90,35 @@ def generate_diff_dict(old_dict, new_dict):
         new_value = new_dict[k]
         new_type = get_value_type(new_value)
 
-        # same types, same values
+        # same values => same types
         if old_value == new_value:
-            diff_dict[k] = {'state': 'unchanged',
-                            'type': old_type,
-                            'value': old_value}
+            diff_dict[k] = {
+                'state': 'unchanged',
+                'type': old_type,
+                'value': old_value
+            }
             continue
 
-        # if old_type == new_type:
-        #     if old_type == 'primitive':
-        #         pass
-        #     elif old_type == 'array':
-        #         pass
-        #     elif old_type == 'dict':
-        #         pass
-        #     else:
-        # else:
-
-
-        # different types, different values
-        if old_type != new_type:
-            diff_dict[k] = {'state': 'changed',
-                            'type': {
-                                'old': old_type,
-                                'new': new_type
-                            },
-                            'value': {
-                                'old': old_value,
-                                'new': new_value
-                            }}
-        else:  # same types, different values
-            if old_type != 'primitive':
-                diff_dict[k] = {'state': 'changed',
-                                'type': old_type,
-                                'value': generate_diff_dict(old_value, new_value)}
-            else:
-                diff_dict[k] = {'state': 'changed',
-                                'type': old_type,
-                                'value': {
-                                    'old': old_value,
-                                    'new': new_value
-                                }}
+        # same value types
+        # Note: DON'T check values for equality
+        if old_type == new_type:
+            diff_dict[k] = {
+                'state': 'changed',
+                'type': old_type,
+                'value': get_value_for_type(old_type)(old_value, new_value)
+            }
+        else:
+            diff_dict[k] = {
+                'state': 'changed',
+                'type': {
+                    'old': old_type,
+                    'new': new_type
+                },
+                'value': {
+                    'old': old_value,
+                    'new': new_value
+                }
+            }
 
     return diff_dict
 
