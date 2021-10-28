@@ -1,0 +1,30 @@
+{
+    "host": {
+        "state": "unchanged",
+        "type": "primitive",
+        "value": "hexlet.io"
+    },
+    "timeout": {
+        "state": "changed",
+        "type": "primitive",
+        "value": {
+            "old": 50,
+            "new": 20
+        }
+    },
+    "verbose": {
+        "state": "added",
+        "type": "primitive",
+        "value": true
+    },
+    "proxy": {
+        "state": "removed",
+        "type": "primitive",
+        "value": "123.234.53.22"
+    },
+    "follow": {
+        "state": "removed",
+        "type": "primitive",
+        "value": false
+    }
+}

@@ -16,6 +16,9 @@ test:
 gendiff:
 	poetry run gendiff
 
+latest-gendiff: package-install
+	poetry run gendiff
+
 test-coverage:
 	poetry run pytest --cov=gendiff --cov-report xml
 

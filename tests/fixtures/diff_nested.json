@@ -1,0 +1,127 @@
+{
+    "common": {
+        "state": "changed",
+        "type": "object",
+        "value": {
+            "setting2": {
+                "state": "removed",
+                "type": "primitive",
+                "value": 200
+            },
+            "setting5": {
+                "state": "added",
+                "type": "object",
+                "value": {
+                    "key5": "value5"
+                }
+            },
+            "follow": {
+                "state": "added",
+                "type": "primitive",
+                "value": false
+            },
+            "setting4": {
+                "state": "added",
+                "type": "primitive",
+                "value": "blah blah"
+            },
+            "setting6": {
+                "state": "changed",
+                "type": "object",
+                "value": {
+                    "ops": {
+                        "state": "added",
+                        "type": "primitive",
+                        "value": "vops"
+                    },
+                    "key": {
+                        "state": "unchanged",
+                        "type": "primitive",
+                        "value": "value"
+                    },
+                    "doge": {
+                        "state": "changed",
+                        "type": "object",
+                        "value": {
+                            "wow": {
+                                "state": "changed",
+                                "type": "primitive",
+                                "value": {
+                                    "old": "",
+                                    "new": "so much"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "setting1": {
+                "state": "unchanged",
+                "type": "primitive",
+                "value": "Value 1"
+            },
+            "setting3": {
+                "state": "changed",
+                "type": "primitive",
+                "value": {
+                    "old": true,
+                    "new": null
+                }
+            }
+        }
+    },
+    "group1": {
+        "state": "changed",
+        "type": "object",
+        "value": {
+            "baz": {
+                "state": "changed",
+                "type": "primitive",
+                "value": {
+                    "old": "bas",
+                    "new": "bars"
+                }
+            },
+            "foo": {
+                "state": "unchanged",
+                "type": "primitive",
+                "value": "bar"
+            },
+            "nest": {
+                "state": "changed",
+                "type": {
+                    "old": "object",
+                    "new": "primitive"
+                },
+                "value": {
+                    "old": {
+                        "key": "value"
+                    },
+                    "new": "str"
+                }
+            }
+        }
+    },
+    "group2": {
+        "state": "removed",
+        "type": "object",
+        "value": {
+            "abc": 12345,
+            "deep": {
+                "id": 45
+            }
+        }
+    },
+    "group3": {
+        "state": "added",
+        "type": "object",
+        "value": {
+            "deep": {
+                "id": {
+                    "number": 45
+                }
+            },
+            "fee": 100500
+        }
+    }
+}

@@ -1,13 +1,30 @@
 from gendiff import generate_diff
+import json
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def test_diff():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    filepath1 = os.path.join(base_dir, 'fixtures/file1.json')
-    filepath2 = os.path.join(base_dir, 'fixtures/file2.json')
 
-    with open('tests/fixtures/diff_file1_file2', 'r') as df:
-        diff = df.read()
+def get_filepath(filepath):
+    return os.path.join(BASE_DIR, 'fixtures', filepath)
 
-    assert generate_diff(filepath1, filepath2) == diff
+
+def load_json(filepath):
+    with open(filepath) as f:
+        return json.load(f)
+
+
+def test_simple_diff():
+    filepath1 = get_filepath('simple1.json')
+    filepath2 = get_filepath('simple2.json')
+    diffpath = get_filepath('diff_simple.json')
+
+    assert generate_diff(filepath1, filepath2) == load_json(diffpath)
+
+
+def test_nested_diff():
+    filepath1 = get_filepath('nested1.json')
+    filepath2 = get_filepath('nested2.json')
+    diffpath = get_filepath('diff_nested.json')
+
+    assert generate_diff(filepath1, filepath2) == load_json(diffpath)
