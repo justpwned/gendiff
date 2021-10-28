@@ -2,7 +2,6 @@
 
 import argparse
 import gendiff
-import json
 
 
 def handle_args():
@@ -15,8 +14,8 @@ def handle_args():
 
 def main():
     args = handle_args()
-    result = gendiff.generate_diff(args.first_file, args.second_file)
-    print(json.dumps(result, indent=4))
+    diff = gendiff.generate_diff(args.first_file, args.second_file)
+    print(gendiff.diff_stringify(diff))
 
 
 if __name__ == '__main__':

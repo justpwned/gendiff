@@ -20,6 +20,56 @@ def stringify(value, replacer=' ', space_count=1):
     return walk(value, 1)
 
 
+def diff_stringify(diff_dict):
+    node_indents = {
+        'added': '  + ',
+        'removed': '  - ',
+        'unchanged': '    '
+    }
+
+    def walk_default_node(key, node):
+        indent = node_indents[node['state']]
+        node_type = node['type']
+        node_value = node['value']
+        if node_type == 'primitive':
+            return f'{indent}{key}: {str(node_value).lower()}'
+        elif node_type == 'dict':
+            pass
+        elif node_type == 'list':
+            pass
+
+    def walk_changed_node(key, node):
+        indent = node_indents['unchanged']
+        node_type = node['type']
+        old_node_value = node['value']['old']
+        new_node_value = node['value']['new']
+        if node_type == 'primitive':
+            return f'{node_indents["removed"]}{key}: {old_node_value}\n'\
+                   f'{node_indents["added"]}{key}: {new_node_value}'
+        elif node_type == 'dict':
+            pass
+        elif node_type == 'list':
+            pass
+
+    def walk_node(key, node):
+        if node['state'] == 'changed':
+            return walk_changed_node(key, node)
+        else:
+            return walk_default_node(key, node)
+
+    def walk(diff, depth):
+        node_lines = []
+        prev_indent = (depth - 1) * node_indents['unchanged']
+        base_indent = depth * node_indents['unchanged']
+        for key, node in sorted(diff.items()):
+            node_string = walk_node(key, node)
+            node_lines.append(f'{base_indent}{node_string}')
+        result = '\n'.join(node_lines)
+        return f'{{\n{result}\n}}'
+
+    return walk(diff_dict, 0)
+
+
 def get_value_type(value):
     if isinstance(value, dict):
         return 'dict'
@@ -29,7 +79,7 @@ def get_value_type(value):
 
 
 # A bit hacky solution, couldn't find a way to make it more elegant without OOP
-def get_value_for_type(type):
+def get_value_for_complex_type(type):
     return globals()['generate_diff_' + type]
 
 
@@ -105,7 +155,7 @@ def generate_diff_dict(old_dict, new_dict):
             diff_dict[k] = {
                 'state': 'changed',
                 'type': old_type,
-                'value': get_value_for_type(old_type)(old_value, new_value)
+                'value': get_value_for_complex_type(old_type)(old_value, new_value)
             }
         else:
             diff_dict[k] = {
