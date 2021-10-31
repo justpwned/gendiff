@@ -4,3 +4,16 @@
 [![CI](https://github.com/justpwned/python-project-lvl2/actions/workflows/ci.yml/badge.svg)](https://github.com/justpwned/python-project-lvl2/actions/workflows/ci.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/22860139a1566276afc0/maintainability)](https://codeclimate.com/github/justpwned/python-project-lvl2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/22860139a1566276afc0/test_coverage)](https://codeclimate.com/github/justpwned/python-project-lvl2/test_coverage)
+
+Diff dict semantics:
+
+    <TYPE> := 'dict' | 'list' | 'primitive'
+    <VALUE> := <DICT> | <LIST> | <PRIMITIVE>
+
+    {
+        field: {
+            'state': 'added' | 'removed' | 'unchanged' | 'updated' ,
+            'type': <TYPE> | { 'old': <TYPE>, 'new': <TYPE>}
+            'value': <VALUE> | { 'old': <VALUE>, 'new': <VALUE> }
+        }
+    }

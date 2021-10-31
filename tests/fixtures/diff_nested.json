@@ -1,12 +1,35 @@
 {
     "common": {
-        "state": "changed",
+        "state": "updated",
         "type": "dict",
         "value": {
+            "follow": {
+                "state": "added",
+                "type": "primitive",
+                "value": false
+            },
+            "setting1": {
+                "state": "unchanged",
+                "type": "primitive",
+                "value": "Value 1"
+            },
             "setting2": {
                 "state": "removed",
                 "type": "primitive",
                 "value": 200
+            },
+            "setting3": {
+                "state": "updated",
+                "type": "primitive",
+                "value": {
+                    "new": null,
+                    "old": true
+                }
+            },
+            "setting4": {
+                "state": "added",
+                "type": "primitive",
+                "value": "blah blah"
             },
             "setting5": {
                 "state": "added",
@@ -15,71 +38,48 @@
                     "key5": "value5"
                 }
             },
-            "follow": {
-                "state": "added",
-                "type": "primitive",
-                "value": false
-            },
-            "setting4": {
-                "state": "added",
-                "type": "primitive",
-                "value": "blah blah"
-            },
             "setting6": {
-                "state": "changed",
+                "state": "updated",
                 "type": "dict",
                 "value": {
-                    "ops": {
-                        "state": "added",
-                        "type": "primitive",
-                        "value": "vops"
+                    "doge": {
+                        "state": "updated",
+                        "type": "dict",
+                        "value": {
+                            "wow": {
+                                "state": "updated",
+                                "type": "primitive",
+                                "value": {
+                                    "new": "so much",
+                                    "old": ""
+                                }
+                            }
+                        }
                     },
                     "key": {
                         "state": "unchanged",
                         "type": "primitive",
                         "value": "value"
                     },
-                    "doge": {
-                        "state": "changed",
-                        "type": "dict",
-                        "value": {
-                            "wow": {
-                                "state": "changed",
-                                "type": "primitive",
-                                "value": {
-                                    "old": "",
-                                    "new": "so much"
-                                }
-                            }
-                        }
+                    "ops": {
+                        "state": "added",
+                        "type": "primitive",
+                        "value": "vops"
                     }
-                }
-            },
-            "setting1": {
-                "state": "unchanged",
-                "type": "primitive",
-                "value": "Value 1"
-            },
-            "setting3": {
-                "state": "changed",
-                "type": "primitive",
-                "value": {
-                    "old": true,
-                    "new": null
                 }
             }
         }
     },
     "group1": {
-        "state": "changed",
+        "state": "updated",
         "type": "dict",
         "value": {
             "baz": {
-                "state": "changed",
+                "state": "updated",
                 "type": "primitive",
                 "value": {
-                    "old": "bas",
-                    "new": "bars"
+                    "new": "bars",
+                    "old": "bas"
                 }
             },
             "foo": {
@@ -88,16 +88,16 @@
                 "value": "bar"
             },
             "nest": {
-                "state": "changed",
+                "state": "updated",
                 "type": {
-                    "old": "dict",
-                    "new": "primitive"
+                    "new": "primitive",
+                    "old": "dict"
                 },
                 "value": {
+                    "new": "str",
                     "old": {
                         "key": "value"
-                    },
-                    "new": "str"
+                    }
                 }
             }
         }

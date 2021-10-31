@@ -15,7 +15,7 @@
         "value": "123.234.53.22"
     },
     "timeout": {
-        "state": "updated",
+        "state": "changed",
         "type": "primitive",
         "value": {
             "new": 20,

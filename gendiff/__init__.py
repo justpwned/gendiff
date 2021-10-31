@@ -1,2 +1,1 @@
-from .formatter import *
-from .parser import generate_diff
+from .diff import generate_diff  # noqa: F401

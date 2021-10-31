@@ -1,4 +1,5 @@
-__all__ = ['format_stylish']
+import json
+
 
 def stringify_dict(value, replacer=' ', space_count=4, depth_start=1):
     base_indent = replacer * space_count
@@ -19,19 +20,27 @@ def stringify_dict(value, replacer=' ', space_count=4, depth_start=1):
     return walk(value, depth_start)
 
 
-def render_primitive(value):
+def render_primitive(value, str_wrapper=''):
     if value is None:
         return 'null'
     elif isinstance(value, bool):
         return str(value).lower()
+    elif isinstance(value, str):
+        return f'{str_wrapper}{value}{str_wrapper}'
     return str(value)
 
 
-def render_value(value, type, **kwargs):
+def render_value(value, type, *, render_complex=True, str_wrapper='', **kwargs):
     if type == 'primitive':
-        return render_primitive(value)
-    elif type == 'dict':
+        return render_primitive(value, str_wrapper)
+
+    if not render_complex:
+        return '[complex value]'
+
+    if type == 'dict':
         return str(stringify_dict(value, **kwargs))
+
+    raise Exception(f'Type {type} is not supported for rendering')
 
 
 def format_stylish(diff_dict):
@@ -41,6 +50,7 @@ def format_stylish(diff_dict):
         'unchanged': '    '
     }
 
+    # default node - any node except "updated"
     def walk_default_node(key, node, depth):
         indent = node_indents[node['state']]
         # node_value contains the final value in this case, meaning that
@@ -50,7 +60,7 @@ def format_stylish(diff_dict):
             node['value'], node['type'], depth_start=depth + 1)
         return f'{indent}{key}: {rendered_value}'
 
-    def walk_changed_node(key, node, depth):
+    def walk_updated_node(key, node, depth):
         indent = node_indents['unchanged']
         node_type = node['type']
         node_value = node['value']
@@ -76,15 +86,12 @@ def format_stylish(diff_dict):
                    f'{add_indent}{node_indents["added"]}{key}: {new_rendered_value}'
 
     def walk_node(key, node, depth):
-        if node['state'] != 'changed':
-            return walk_default_node(key, node, depth)
-
-        # "changed" node returns two components
-        return walk_changed_node(key, node, depth)
+        if node['state'] == 'updated':
+            return walk_updated_node(key, node, depth)
+        return walk_default_node(key, node, depth)
 
     def walk_diff(diff, depth):
         node_lines = []
-        prev_indent = (depth - 1) * node_indents['unchanged']
         base_indent = depth * node_indents['unchanged']
         for key, node in sorted(diff.items()):
             node_string = walk_node(key, node, depth + 1)
@@ -93,3 +100,55 @@ def format_stylish(diff_dict):
         return f'{{\n{result}\n{base_indent}}}'
 
     return walk_diff(diff_dict, 0)
+
+
+def format_plain(diff_dict):
+    def render_value_plain(*args, **kwargs):
+        return render_value(*args, **kwargs, render_complex=False, str_wrapper='\'')
+
+    def fullname(names):
+        return ".".join(names)
+
+    def walk_updated_node(key, node, names):
+        node_type = node['type']
+        node_value = node['value']
+        if node_type == 'primitive':
+            old_value = render_value_plain(node_value['old'], node_type)
+            new_value = render_value_plain(node_value['new'], node_type)
+            return f'Property \'{fullname(names)}\' was updated. From {old_value} to {new_value}'
+        elif node_type == 'dict':
+            return walk(node_value, names)
+        elif node_type == 'list':
+            raise Exception('List has not been implemented yet')
+        else:
+            old_type = node_type['old']
+            new_type = node_type['new']
+            old_value = render_value_plain(node_value['old'], old_type)
+            new_value = render_value_plain(node_value['new'], new_type)
+            return f'Property \'{fullname(names)}\' was updated. From {old_value} to {new_value}'
+
+    def walk(diff, names):
+        lines = []
+        for key in sorted(diff.keys()):
+            new_names = names + [key]
+            node = diff[key]
+            state = node['state']
+            if state == 'unchanged':
+                continue
+
+            line = f'Property \'{fullname(new_names)}\' was {state}'
+            if state == 'added':
+                node_value = node['value']
+                node_type = node['type']
+                line = f'{line} with value: {render_value_plain(node_value, node_type)}'
+            elif state == 'updated':
+                line = walk_updated_node(key, node, new_names)
+
+            lines.append(line)
+        return '\n'.join(lines)
+
+    return walk(diff_dict, [])
+
+
+def format_json(diff_dict):
+    return json.dumps(diff_dict, indent=4, sort_keys=True).strip()
