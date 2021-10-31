@@ -84,8 +84,9 @@ def generate_diff_dict(old_dict, new_dict):
         # same value types
         # Note: DON'T check values for equality
         if old_type == new_type:
+            gendiff_func = get_gendiff_func(old_type)
             updated_dict[k] = create_diff_node(
-                'updated', old_type, get_gendiff_func(old_type)(old_value, new_value))
+                'updated', old_type, gendiff_func(old_value, new_value))
         else:
             updated_dict[k] = create_diff_node(
                 'updated',

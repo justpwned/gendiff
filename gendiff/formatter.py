@@ -1,8 +1,9 @@
 import json
 
 
-def stringify_dict(value, replacer=' ', space_count=4, depth_start=1):
+def stringify_dict(value, replacer=' ', space_count=4, **kwargs):
     base_indent = replacer * space_count
+    depth_start = kwargs.get('depth_start', 1)
 
     def walk(value, depth):
         if not isinstance(value, dict):
@@ -43,7 +44,7 @@ def render_value(value, type, *, render_complex=True, str_wrapper='', **kwargs):
     raise Exception(f'Type {type} is not supported for rendering')
 
 
-def format_stylish(diff_dict):
+def format_stylish(diff_dict):  # noqa: C901
     node_indents = {
         'added': '  + ',
         'removed': '  - ',
@@ -67,8 +68,10 @@ def format_stylish(diff_dict):
 
         if node_type == 'primitive':
             add_indent = (depth - 1) * indent
-            return f'{node_indents["removed"]}{key}: {render_value(node_value["old"], node_type)}\n'\
-                   f'{add_indent}{node_indents["added"]}{key}: {render_value(node_value["new"], node_type)}'
+            old_value = render_value(node_value["old"], node_type)
+            new_value = render_value(node_value["new"], node_type)
+            return f'{node_indents["removed"]}{key}: {old_value}\n'\
+                   f'{add_indent}{node_indents["added"]}{key}: {new_value}'
         elif node_type == 'dict':
             dict_indent = indent
             return f'{dict_indent}{key}: {walk_diff(node_value, depth)}'
@@ -78,12 +81,12 @@ def format_stylish(diff_dict):
             old_type = node_type['old']
             new_type = node_type['new']
             add_indent = (depth - 1) * indent
-            old_rendered_value = render_value(
+            old_value = render_value(
                 node_value["old"], old_type, depth_start=depth + 1)
-            new_rendered_value = render_value(
+            new_value = render_value(
                 node_value["new"], new_type, depth_start=depth + 1)
-            return f'{node_indents["removed"]}{key}: {old_rendered_value}\n'\
-                   f'{add_indent}{node_indents["added"]}{key}: {new_rendered_value}'
+            return f'{node_indents["removed"]}{key}: {old_value}\n'\
+                   f'{add_indent}{node_indents["added"]}{key}: {new_value}'
 
     def walk_node(key, node, depth):
         if node['state'] == 'updated':
@@ -102,9 +105,12 @@ def format_stylish(diff_dict):
     return walk_diff(diff_dict, 0)
 
 
-def format_plain(diff_dict):
+def format_plain(diff_dict):  # noqa: C901
     def render_value_plain(*args, **kwargs):
-        return render_value(*args, **kwargs, render_complex=False, str_wrapper='\'')
+        return render_value(
+            *args, **kwargs,
+            render_complex=False,
+            str_wrapper='\'')
 
     def fullname(names):
         return ".".join(names)
@@ -115,7 +121,8 @@ def format_plain(diff_dict):
         if node_type == 'primitive':
             old_value = render_value_plain(node_value['old'], node_type)
             new_value = render_value_plain(node_value['new'], node_type)
-            return f'Property \'{fullname(names)}\' was updated. From {old_value} to {new_value}'
+            return f'Property \'{fullname(names)}\' was updated. '\
+                   f'From {old_value} to {new_value}'
         elif node_type == 'dict':
             return walk(node_value, names)
         elif node_type == 'list':
@@ -125,7 +132,8 @@ def format_plain(diff_dict):
             new_type = node_type['new']
             old_value = render_value_plain(node_value['old'], old_type)
             new_value = render_value_plain(node_value['new'], new_type)
-            return f'Property \'{fullname(names)}\' was updated. From {old_value} to {new_value}'
+            return f'Property \'{fullname(names)}\' was updated. '\
+                   f'From {old_value} to {new_value}'
 
     def walk(diff, names):
         lines = []
@@ -138,9 +146,8 @@ def format_plain(diff_dict):
 
             line = f'Property \'{fullname(new_names)}\' was {state}'
             if state == 'added':
-                node_value = node['value']
-                node_type = node['type']
-                line = f'{line} with value: {render_value_plain(node_value, node_type)}'
+                result = render_value_plain(node['value'], node['type'])
+                line = f'{line} with value: {result}'
             elif state == 'updated':
                 line = walk_updated_node(key, node, new_names)
 
