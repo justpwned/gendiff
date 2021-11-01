@@ -5,7 +5,8 @@ import gendiff
 
 
 def handle_args():
-    parser = argparse.ArgumentParser(description='Compare two documents. Supported formats: JSON, YAML')
+    parser = argparse.ArgumentParser(
+        description='Compare two documents. Supported formats: JSON, YAML')
     parser.add_argument('first_file', help='Old file')
     parser.add_argument('second_file', help='New file')
     parser.add_argument(
