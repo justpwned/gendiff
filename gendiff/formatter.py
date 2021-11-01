@@ -115,7 +115,7 @@ def format_plain(diff_dict):  # noqa: C901
     def fullname(names):
         return ".".join(names)
 
-    def walk_updated_node(key, node, names):
+    def walk_updated_node(node, names):
         node_type = node['type']
         node_value = node['value']
         if node_type == 'primitive':
@@ -135,6 +135,14 @@ def format_plain(diff_dict):  # noqa: C901
             return f'Property \'{fullname(names)}\' was updated. '\
                    f'From {old_value} to {new_value}'
 
+    def walk_default_node(node, names):
+        state = node['state']
+        line = f'Property \'{fullname(names)}\' was {state}'
+        if state == 'added':
+            result = render_value_plain(node['value'], node['type'])
+            line = f'{line} with value: {result}'
+        return line
+
     def walk(diff, names):
         lines = []
         for key in sorted(diff.keys()):
@@ -144,12 +152,10 @@ def format_plain(diff_dict):  # noqa: C901
             if state == 'unchanged':
                 continue
 
-            line = f'Property \'{fullname(new_names)}\' was {state}'
-            if state == 'added':
-                result = render_value_plain(node['value'], node['type'])
-                line = f'{line} with value: {result}'
-            elif state == 'updated':
-                line = walk_updated_node(key, node, new_names)
+            if state == 'updated':
+                line = walk_updated_node(node, new_names)
+            else:
+                line = walk_default_node(node, new_names)
 
             lines.append(line)
         return '\n'.join(lines)
