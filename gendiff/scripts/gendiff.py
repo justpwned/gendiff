@@ -5,14 +5,14 @@ import gendiff
 
 
 def handle_args():
-    parser = argparse.ArgumentParser(description='Generate diff')
-    parser.add_argument('first_file')
-    parser.add_argument('second_file')
+    parser = argparse.ArgumentParser(description='Compare two documents. Supported formats: JSON, YAML')
+    parser.add_argument('first_file', help='Old file')
+    parser.add_argument('second_file', help='New file')
     parser.add_argument(
         '-f', '--format',
         choices=['stylish', 'plain', 'json'],
         default='stylish',
-        help='set format of output')
+        help='Set format of output (default: stylish)')
     return parser.parse_args()
 
 
