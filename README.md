@@ -42,7 +42,7 @@ optional arguments:
 
 ## Demo
 
-![Demo gif](tests/fixtures/render1635726863142.gif)
+![Demo gif](tests/fixtures/render1635727875783.gif)
 
 ### Diff dict semantics
 
