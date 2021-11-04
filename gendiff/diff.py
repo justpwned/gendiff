@@ -98,7 +98,7 @@ def generate_diff_dict(old_dict, new_dict):
     return {**removed_dict, **added_dict, **updated_dict}
 
 
-def generate_diff(filepath1, filepath2, format_name):
+def generate_diff(filepath1, filepath2, format_name='stylish'):
     dict1, dict2 = parser.parse_file(filepath1), parser.parse_file(filepath2)
     diff_dict = generate_diff_dict(dict1, dict2)
 
