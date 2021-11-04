@@ -1,64 +1,62 @@
 import os
+import pytest
 from gendiff import generate_diff
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def get_fixture_path(filepath):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_dir, 'fixtures', filepath)
 
 
-def get_fixture_filepath(filepath):
-    return os.path.join(BASE_DIR, 'fixtures', filepath)
+@pytest.fixture
+def simple_json_paths():
+    return get_fixture_path('simple1.json'),\
+        get_fixture_path('simple2.json')
 
 
-# TODO: Move file loading into separate fixtures for simple and nested tests
+@pytest.fixture
+def nested_json_paths():
+    return get_fixture_path('nested1.json'),\
+        get_fixture_path('nested2.json')
 
-def test_simple_diff_json_format():
-    json1 = get_fixture_filepath('simple1.json')
-    json2 = get_fixture_filepath('simple2.json')
-    with open(get_fixture_filepath('diff_simple.json')) as f:
+
+def test_simple_diff_json_format(simple_json_paths):
+    with open(get_fixture_path('diff_simple.json')) as f:
         diff = f.read()
 
-    assert generate_diff(json1, json2, 'json') == diff
+    assert generate_diff(*simple_json_paths, 'json') == diff
 
 
-def test_nested_diff_json_format():
-    json1 = get_fixture_filepath('nested1.json')
-    json2 = get_fixture_filepath('nested2.json')
-    with open(get_fixture_filepath('diff_nested.json')) as f:
+def test_nested_diff_json_format(nested_json_paths):
+    with open(get_fixture_path('diff_nested.json')) as f:
         diff = f.read()
 
-    assert generate_diff(json1, json2, 'json') == diff
+    assert generate_diff(*nested_json_paths, 'json') == diff
 
 
-def test_simple_diff_stylish_format():
-    json1 = get_fixture_filepath('simple1.json')
-    json2 = get_fixture_filepath('simple2.json')
-    with open(get_fixture_filepath('diff_simple_stylish')) as f:
+def test_simple_diff_stylish_format(simple_json_paths):
+    with open(get_fixture_path('diff_simple_stylish')) as f:
         diff = f.read()
 
-    assert generate_diff(json1, json2, 'stylish') == diff
+    assert generate_diff(*simple_json_paths, 'stylish') == diff
 
 
-def test_nested_diff_stylish_format():
-    json1 = get_fixture_filepath('nested1.json')
-    json2 = get_fixture_filepath('nested2.json')
-    with open(get_fixture_filepath('diff_nested_stylish')) as f:
+def test_nested_diff_stylish_format(nested_json_paths):
+    with open(get_fixture_path('diff_nested_stylish')) as f:
         diff = f.read()
 
-    assert generate_diff(json1, json2, 'stylish') == diff
+    assert generate_diff(*nested_json_paths, 'stylish') == diff
 
 
-def test_simple_diff_plain_format():
-    json1 = get_fixture_filepath('simple1.json')
-    json2 = get_fixture_filepath('simple2.json')
-    with open(get_fixture_filepath('diff_simple_plain')) as f:
+def test_simple_diff_plain_format(simple_json_paths):
+    with open(get_fixture_path('diff_simple_plain')) as f:
         diff = f.read()
 
-    assert generate_diff(json1, json2, 'plain') == diff
+    assert generate_diff(*simple_json_paths, 'plain') == diff
 
 
-def test_nested_diff_plain_format():
-    json1 = get_fixture_filepath('nested1.json')
-    json2 = get_fixture_filepath('nested2.json')
-    with open(get_fixture_filepath('diff_nested_plain')) as f:
+def test_nested_diff_plain_format(nested_json_paths):
+    with open(get_fixture_path('diff_nested_plain')) as f:
         diff = f.read()
 
-    assert generate_diff(json1, json2, 'plain') == diff
+    assert generate_diff(*nested_json_paths, 'plain') == diff
