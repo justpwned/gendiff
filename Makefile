@@ -1,7 +1,7 @@
 install:
 	poetry install
 
-build:
+build: install
 	poetry build
 
 package-install: build
