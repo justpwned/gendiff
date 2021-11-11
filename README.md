@@ -3,7 +3,7 @@
 [![CI](https://github.com/justpwned/python-project-lvl2/actions/workflows/ci.yml/badge.svg)](https://github.com/justpwned/python-project-lvl2/actions/workflows/ci.yml)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/22860139a1566276afc0/test_coverage)](https://codeclimate.com/github/justpwned/python-project-lvl2/test_coverage)
 
-Compare two documents
+Gendiff is a command line tool and library for comparing two documents
 
 Supported formats:
 
@@ -12,14 +12,9 @@ Supported formats:
 
 ## Installation
 
-```bash
-# Install Poetry
-pip install poetry
+Assuming you've already got [Poetry](https://python-poetry.org/) installed:
 
-# Install dependencies
-make install
-
-# Install package
+```
 make package-install
 ```
 
